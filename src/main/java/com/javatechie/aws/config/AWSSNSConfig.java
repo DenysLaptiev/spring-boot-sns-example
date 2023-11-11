@@ -1,5 +1,6 @@
 package com.javatechie.aws.config;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -9,6 +10,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.sns.SnsClient;
 
 @Configuration
 public class AWSSNSConfig {
@@ -24,10 +30,19 @@ public class AWSSNSConfig {
 
     @Primary
     @Bean
-    public AmazonSNSClient getSnsClient() {
+    public AmazonSNSClient amazonSnsClient() {
         return (AmazonSNSClient) AmazonSNSClientBuilder.standard()
                 .withRegion(region)
                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
+                .build();
+    }
+
+    @Bean
+    public SnsClient snsClient() {
+
+        return SnsClient.builder()
+                .region(Region.EU_WEST_3)
+                .credentialsProvider(ProfileCredentialsProvider.create())
                 .build();
     }
 }

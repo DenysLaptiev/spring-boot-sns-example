@@ -1,10 +1,16 @@
 package com.javatechie.aws.model;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
-@AllArgsConstructor
+
 @Data
 public class Message {
     private String message;
+
+    @JsonCreator
+    public Message(@JsonProperty("message") String message) {
+        this.message = message;
+    }
 }
