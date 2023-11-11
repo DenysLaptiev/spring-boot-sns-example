@@ -40,7 +40,7 @@ public class AWSSNSConfig {
     }
 
     @Bean
-    public NotificationMessagingTemplate notificationMessagingTemplate(AmazonSNS amazonSNS) {
+    public NotificationMessagingTemplate notificationMessagingTemplate(AmazonSNSClient amazonSNS) {
         return new NotificationMessagingTemplate(amazonSNS);
     }
 
