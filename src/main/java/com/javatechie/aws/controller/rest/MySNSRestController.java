@@ -75,7 +75,7 @@ public class MySNSRestController {
 
      */
     @PostMapping("/add-https-subscription")
-    public String subscripeHTTPSToTopic(@RequestBody Message message) {
+    public String subscribeHTTPSToTopic(@RequestBody Message message) {
         log.info("---> MySNSRestController: subscripeHTTPSToTopic: message="+message.getMessage());
         return service.subscribeHTTPSToTopic(message.getMessage());
     }

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/image-topic")//image-topic - is the name of the topic
+@RequestMapping("/topic-subscriber")//image-topic - is the name of the topic
 @Slf4j
 public class SNSEndpointController {
 
