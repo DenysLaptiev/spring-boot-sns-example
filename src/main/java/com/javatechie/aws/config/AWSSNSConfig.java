@@ -4,9 +4,11 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -35,6 +37,11 @@ public class AWSSNSConfig {
                 .withRegion(region)
                 .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
                 .build();
+    }
+
+    @Bean
+    public NotificationMessagingTemplate notificationMessagingTemplate(AmazonSNS amazonSNS) {
+        return new NotificationMessagingTemplate(amazonSNS);
     }
 
     @Bean

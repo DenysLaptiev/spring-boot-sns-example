@@ -1,18 +1,24 @@
 package com.javatechie.aws.controller.rest;
 
 import com.javatechie.aws.model.Message;
+import com.javatechie.aws.model.NotificationRequest;
 import com.javatechie.aws.service.MySNSService;
+import com.javatechie.aws.service.SNSMessageSender;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@Slf4j
 public class MySNSRestController {
 
     private final MySNSService service;
+    private final SNSMessageSender snsMessageSender;
 
     @Autowired
-    public MySNSRestController(MySNSService service) {
+    public MySNSRestController(MySNSService service, SNSMessageSender snsMessageSender) {
         this.service = service;
+        this.snsMessageSender = snsMessageSender;
     }
 
     @GetMapping("/add-subscription/{email}")
@@ -48,14 +54,35 @@ public class MySNSRestController {
         return service.publishToTopic(message.getMessage());
     }
 
-    @PostMapping("/add-https-subscription")
-    public String subscripeHTTPSToTopic(@RequestBody Message message) {
-        return service.subscribeHTTPSToTopic(message.getMessage());
+    @PostMapping("/publish-with-sender")
+    public String publishToTopicWithSender(@RequestBody NotificationRequest notificationRequest) {
+        log.info("topicName="+notificationRequest.getTopicName());
+        log.info("message="+notificationRequest.getMessage());
+        log.info("subject="+notificationRequest.getSubject());
+        snsMessageSender.send(notificationRequest.getTopicName(),notificationRequest.getMessage(),notificationRequest.getSubject());
+        return notificationRequest.getMessage();
     }
 
-    @PostMapping("/receive")
-    public String receiveMessageFromTopic(@RequestBody Object message) {
-        System.out.println(message);
-        return message.toString();
+
+    /*
+    For example, we can subscribe to a topic "image-topic" by calling the URL:
+        https://host:port/image-topic/
+
+{
+    "message":"https://sns-service.eu-west-3.elasticbeanstalk.com/image-topic/"
+}
+
+
+     */
+    @PostMapping("/add-https-subscription")
+    public String subscripeHTTPSToTopic(@RequestBody Message message) {
+        log.info("---> MySNSRestController: subscripeHTTPSToTopic: message="+message.getMessage());
+        return service.subscribeHTTPSToTopic(message.getMessage());
     }
+//
+//    @PostMapping("/receive")
+//    public String receiveMessageFromTopic(@RequestBody Object message) {
+//        System.out.println(message);
+//        return message.toString();
+//    }
 }
