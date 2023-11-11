@@ -79,10 +79,10 @@ public class MySNSRestController {
         log.info("---> MySNSRestController: subscripeHTTPSToTopic: message="+message.getMessage());
         return service.subscribeHTTPSToTopic(message.getMessage());
     }
-//
-//    @PostMapping("/receive")
-//    public String receiveMessageFromTopic(@RequestBody Object message) {
-//        System.out.println(message);
-//        return message.toString();
-//    }
+
+    @PostMapping("/receive")
+    public String receiveMessageFromTopic(@RequestBody String json) {
+        log.info("---> MySNSRestController: receiveMessageFromTopic: json="+json);
+        return json;
+    }
 }
