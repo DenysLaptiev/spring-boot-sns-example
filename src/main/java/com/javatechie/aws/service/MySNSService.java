@@ -129,7 +129,7 @@ public class MySNSService {
                     .build();
             log.info("---> request="+request);
             SubscribeResponse result = snsClient.subscribe(request);
-            log.info("---> request="+request);
+            log.info("---> result="+result);
             System.out.println("Subscription ARN is " + result.subscriptionArn() + "\n\n Status is " + result.sdkHttpResponse().statusCode());
 
         } catch (SnsException e) {
