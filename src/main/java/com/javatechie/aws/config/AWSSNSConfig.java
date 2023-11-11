@@ -12,9 +12,7 @@ import org.springframework.cloud.aws.messaging.core.NotificationMessagingTemplat
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.*;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 
@@ -44,12 +42,25 @@ public class AWSSNSConfig {
         return new NotificationMessagingTemplate(amazonSNS);
     }
 
+    /*
     @Bean
     public SnsClient snsClient() {
 
         return SnsClient.builder()
                 .region(Region.EU_WEST_3)
                 .credentialsProvider(ProfileCredentialsProvider.create())
+                .build();
+    }
+     */
+
+    @Bean
+    public SnsClient snsClient() {
+
+        AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);
+
+        return SnsClient.builder()
+                .region(Region.EU_WEST_3)
+                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
                 .build();
     }
 }
