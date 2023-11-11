@@ -1,6 +1,7 @@
 package com.javatechie.aws.service;
 
 import com.amazonaws.services.sns.AmazonSNSClient;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.services.sns.SnsClient;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.SubscribeRequest;
@@ -14,6 +15,7 @@ import software.amazon.awssdk.services.sns.paginators.ListTopicsIterable;
 
 
 @Service
+@Slf4j
 public class MySNSService {
 
     public static final String PROTOCOL_NAME_EMAIL = "email";
@@ -125,8 +127,9 @@ public class MySNSService {
                     .returnSubscriptionArn(true)
                     .topicArn(topicArn)
                     .build();
-
+            log.info("---> request="+request);
             SubscribeResponse result = snsClient.subscribe(request);
+            log.info("---> request="+request);
             System.out.println("Subscription ARN is " + result.subscriptionArn() + "\n\n Status is " + result.sdkHttpResponse().statusCode());
 
         } catch (SnsException e) {

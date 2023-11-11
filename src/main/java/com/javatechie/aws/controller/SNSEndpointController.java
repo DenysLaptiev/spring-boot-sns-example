@@ -9,11 +9,13 @@ import org.springframework.cloud.aws.messaging.endpoint.NotificationStatus;
 import org.springframework.cloud.aws.messaging.endpoint.annotation.NotificationMessageMapping;
 import org.springframework.cloud.aws.messaging.endpoint.annotation.NotificationSubscriptionMapping;
 import org.springframework.cloud.aws.messaging.endpoint.annotation.NotificationUnsubscribeConfirmationMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@RequestMapping("/topic-subscriber")//image-topic - is the name of the topic
+@Controller
+//@RequestMapping("/topic-subscriber")//image-topic - is the name of the topic
+@RequestMapping("/image-topic")//image-topic - is the name of the topic
 @Slf4j
 public class SNSEndpointController {
 
