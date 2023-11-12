@@ -1,12 +1,23 @@
 package com.javatechie.aws.controller.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.javatechie.aws.model.Message;
 import com.javatechie.aws.model.NotificationRequest;
+import com.javatechie.aws.model.SNSResponseBody;
 import com.javatechie.aws.service.MySNSService;
 import com.javatechie.aws.service.SNSMessageSender;
+import jdk.jfr.ContentType;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -56,10 +67,10 @@ public class MySNSRestController {
 
     @PostMapping("/publish-with-sender")
     public String publishToTopicWithSender(@RequestBody NotificationRequest notificationRequest) {
-        log.info("topicName="+notificationRequest.getTopicName());
-        log.info("message="+notificationRequest.getMessage());
-        log.info("subject="+notificationRequest.getSubject());
-        snsMessageSender.send(notificationRequest.getTopicName(),notificationRequest.getMessage(),notificationRequest.getSubject());
+        log.info("topicName=" + notificationRequest.getTopicName());
+        log.info("message=" + notificationRequest.getMessage());
+        log.info("subject=" + notificationRequest.getSubject());
+        snsMessageSender.send(notificationRequest.getTopicName(), notificationRequest.getMessage(), notificationRequest.getSubject());
         return notificationRequest.getMessage();
     }
 
@@ -76,13 +87,35 @@ public class MySNSRestController {
      */
     @PostMapping("/add-https-subscription")
     public String subscribeHTTPSToTopic(@RequestBody Message message) {
-        log.info("---> MySNSRestController: subscripeHTTPSToTopic: message="+message.getMessage());
+        log.info("---> MySNSRestController: subscripeHTTPSToTopic: message=" + message.getMessage());
         return service.subscribeHTTPSToTopic(message.getMessage());
     }
 
-    @PostMapping("/receive")
-    public String receiveMessageFromTopic(@RequestBody String json) {
-        log.info("---> MySNSRestController: receiveMessageFromTopic: json="+json);
-        return json;
+    @SneakyThrows
+    @PostMapping(value = "/receive")
+    public ResponseEntity<?> receiveMessageFromTopic(@RequestBody String json, @RequestHeader MultiValueMap<String, String> headers) {
+        log.info("---> MySNSRestController: receiveMessageFromTopic: json=" + json);
+
+        Map<String, String> messageHeaders = new HashMap<>();
+        Map<String, String> messageFields = new HashMap<>();
+
+
+        headers.forEach((key, value) -> {
+
+            String joinedStringValue = value.stream().collect(Collectors.joining("|"));
+
+            messageHeaders.put(key, joinedStringValue);
+
+            log.info(String.format(
+                    "Header '%s' = %s", key, joinedStringValue));
+        });
+
+        messageFields = new ObjectMapper().readValue(
+                json.getBytes(),
+                Map.class);
+
+        SNSResponseBody responseBody = new SNSResponseBody(messageHeaders, messageFields);
+        return new ResponseEntity<>(
+                responseBody, HttpStatus.OK);
     }
 }
