@@ -122,7 +122,7 @@ public class MySNSService {
 
         try {
             software.amazon.awssdk.services.sns.model.SubscribeRequest request = software.amazon.awssdk.services.sns.model.SubscribeRequest.builder()
-                    .protocol("https")
+                    .protocol("http")
                     .endpoint(url)
                     .returnSubscriptionArn(true)
                     .topicArn(topicArn)
